@@ -9,13 +9,12 @@
 #SBATCH --A SPILLANTINI-SL3-CPU
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=16
-#SBATCH --output=output_STAR_smp_4
 #SBATCH --mem=10gb
 #SBATCH --time=01:00:00
 #SBATCH --mail-user=mm2458@cam.ac.uk
 #SBATCH --mail-type=ALL
-#SBATCH --output=
-#SBATCH --error=
+#SBATCH --output=$HOME/rds/hpc-work/eofiles/%x.%j.out
+#SBATCH --error=$HOME/rds/hpc-work/eofiles/%x.%j.err
 #SBATCH --no-requeue
 
 echo "Read Trimming {01_trimmomatic.sh}" # Declare start of trimming process
@@ -71,7 +70,7 @@ do
       $trim/${output}_R1.U.fastq.gz \
       $trim/${output}_R2.P.fastq.gz \
       $trim/${output}_R2.P.fastq.gz \
-      ILLUMINACLIP:"$adapters":2:30:10 \
+      ILLUMINACLIP:"$adapters":2:30:10 \  
       LEADING:3 \
       TRAILING:3 \
       SLIDINGWINDOW:4:15 \
