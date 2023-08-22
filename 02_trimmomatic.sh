@@ -6,6 +6,7 @@
 ## SBATCH parameters
 #SBATCH -p skylake-himem
 #SBATCH --J mm2458_Trimmomatic
+#SBATCH --A SPILLANTINI-SL3-CPU
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=16
 #SBATCH --output=output_STAR_smp_4
