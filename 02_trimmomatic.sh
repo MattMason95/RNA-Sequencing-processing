@@ -39,17 +39,13 @@ do
       PE \
       -threads 16 \
       -phred33 \
-      ${fq1} \
-      ${fq2} \
+      $raw/${fq1} \
+      $raw/${fq2} \
       $trim/${output}_R1.P.fastq.gz \
       $trim/${output}_R1.U.fastq.gz \
       $trim/${output}_R2.P.fastq.gz \
       $trim/${output}_R2.P.fastq.gz \
-      ILLUMINACLIP:"$adapters":2:30:10 \  
-      LEADING:3 \
-      TRAILING:3 \
-      SLIDINGWINDOW:4:15 \
-      MINLEN:36
+      ILLUMINACLIP:"$adapters":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 
   # Option to remove the unpaired files
   # rm $trim/${output}_R1.U.fastq.gz \
