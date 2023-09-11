@@ -17,7 +17,7 @@ module load rhel7/default-peta4            # REQUIRED - loads the basic environm
 raw=$1         #Location to read raw reads
 trim=$2        #Location to write trimmed reads
 adapters=$3    #Location to read adapaters
-# trimNAMES=$4   #Naming convention for raw reads
+nTasks=$4   #Naming convention for raw reads
 
 ## TRIMMOMATIC LOCATION
 
@@ -37,7 +37,7 @@ do
   # Run trimmomatic
   java -jar "$TRIMMOMATIC" \
       PE \
-      -threads 16 \
+      -threads $nTasks \
       -phred33 \
       -basein $raw/${fq1} $raw/${fq2} \
       -baseout $trim/${output}_R1p.trimmed.fastq.gz $trim/${output}_R1u.trimmed.fastq.gz $trim/${output}_R2p.trimmed.fastq.gz $trim/${output}_R2u.trimmed.fastq.gz \
