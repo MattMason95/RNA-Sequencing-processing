@@ -19,6 +19,7 @@ trim=$1    #Location to read trimmed reads
 bam=$2     #Location to write BAM files
 fpkm=$3    #Location to write FPKM files
 ctab=$4    #Location to write CTAB files
+nTasks=$5  #Number of threads committed to the job
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> GENOME BUILDING                           <>
@@ -41,7 +42,7 @@ gunzip -k Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
 gunzip -k Mus_musculus.GRCm39.110.gtf.gz
 
 ## GENOME INDEXING
-cmd1 = "STAR --runThreadN 10 --runMode genomeGenerate \
+cmd1 = "STAR --runThreadN $nTasks --runMode genomeGenerate \
 --genomeDIR $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
 --genomeSAindexNBases 10 \
 --sjdbGTFfile $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
@@ -69,7 +70,7 @@ output=${base_}
 
   # Run trimmomatic
 cmd2="STAR \
---runThreadN 8 \
+--runThreadN $nTasks \
 --genomeDir $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
 --readFilesIn ${fq1} ${fq2} \
 --readFilesCommand zcat \
