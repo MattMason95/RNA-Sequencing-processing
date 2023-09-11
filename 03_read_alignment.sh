@@ -41,11 +41,14 @@ gunzip -k Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
 gunzip -k Mus_musculus.GRCm39.110.gtf.gz
 
 ## GENOME INDEXING
-STAR --runThreadN 4 --runMoade genomeGenerate \
-     --genomeDIR $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
-     --genomeSAindexNBases 10 \
-     --sjdbGTFfile $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
-     --genomeFastaFiles $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.dna.primary_assembly.fa
+cmd1 = "STAR --runThreadN 10 --runMode genomeGenerate \
+--genomeDIR $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
+--genomeSAindexNBases 10 \
+--sjdbGTFfile $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
+--genomeFastaFiles $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.dna.primary_assembly.fa"
+
+echo $cmd1
+eval $cmd1 
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> READ ALIGNMENT                            <>
@@ -58,37 +61,37 @@ TRIMMOMATIC="$HOME/rds/hpc-work/Software/trimmomatic-0.39.jar"
 for infile in $raw/*_1.fq.gz 
 do
 
-  base=$(basename ${infile} _1.fq.gz) # Get file basename
-  fq1=${base}_1.fq.gz # Instantiate R1 singleton
-  fq2=${base}_2.fq.gz # Instantiate R2 singleton (PAIRED)
+base=$(basename ${infile} _1.fq.gz) # Get file basename
+fq1=${base}_1.fq.gz # Instantiate R1 singleton
+fq2=${base}_2.fq.gz # Instantiate R2 singleton (PAIRED)
 
-  output=${base_}
+output=${base_}
 
   # Run trimmomatic
-  java -jar "$TRIMMOMATIC" \
-      PE \
-      -threads 16 \
-      -phred33 \
-      ${fq1} \
-      ${fq2} \
-      $trim/${output}_R1.P.fastq.gz \
-      $trim/${output}_R1.U.fastq.gz \
-      $trim/${output}_R2.P.fastq.gz \
-      $trim/${output}_R2.P.fastq.gz \
-      ILLUMINACLIP:"$adapters":2:30:10 \
-      LEADING:3 \
-      TRAILING:3 \
-      SLIDINGWINDOW:4:15 \
-      MINLEN:36
+cmd2="STAR \
+--runThreadN 8 \
+--genomeDir $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
+--readFilesIn ${fq1} ${fq2} \
+--readFilesCommand zcat \
+--outFilterType BySJout \
+--outFilterMultimapNmax 20 \
+--alignSJoverhangMin 8 \
+--alignSJDBoverhangMin 1 \
+--outFilterMismatchNmax 999 
+--outFilterMismatchNoverReadLmax 0.04 \
+--alignIntronMin 20 \
+--alignIntronMax 1000000 \
+--alignMatesGapMax 1000000 \
+--outSAMtype BAM SortedByCoordinate \
+--outFileNamePrefix ${output}_ \
+--quantMode GeneCounts"
 
-  # Option to remove the unpaired files
-  rm $trim/${output}_R1.U.fastq.gz \
-     $trim/${output}_R2.U.fastq.gz
-
+echo $cmd2
+eval $cmd2
 
 done
 
 ## LOGFILE
-sh ./AL_Logs.sh "log" "Trimmomatic" "$trim"
+# sh ./AL_Logs.sh "log" "Trimmomatic" "$trim"
 
 ## FIN
