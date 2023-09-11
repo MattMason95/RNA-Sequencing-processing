@@ -11,7 +11,7 @@ echo "Read Alignment with STAR {03_read_alignment.sh}" # Declare start of trimmi
 
 module load $HOME/rds/hpc-work/Software/STAR
 module load $HOME/rds/hpc-work/Software/samtools
-module load $HOME/rds/hpc-work 
+# module load $HOME/rds/hpc-work 
 
 ## PASSED VARIABLES
 
@@ -59,7 +59,7 @@ TRIMMOMATIC="$HOME/rds/hpc-work/Software/trimmomatic-0.39.jar"
 
 ## EXECUTION
 
-for infile in $raw/*_1.fq.gz 
+for infile in $trim/*_1.fq.gz 
 do
 
 base=$(basename ${infile} _1.fq.gz) # Get file basename
