@@ -50,14 +50,21 @@ bam="$HOME/rds/hpc-work/Data/BAM"                  #Location to write BAM files
 fpkm="$HOME/rds/hpc-work/Data/FPKM"                #Location to write FPKM files
 ctab="$HOME/rds/hpc-work/Data/CTAB"                #Location to write CTAB files
 
-
-
+# ~~~~~~~~~~ FASTQC ~~~~~~~~~~
+QC="$HOME/rds/hpc-work/Data/FastQC"
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> BEGIN MODULAR PIPLINE                     <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
+# ~~~~~~~~~~ FASTQC ~~~~~~~~~~
+echo "Initiating FastQC"
+cmdQC="$HOME/rds/hpc-work/Software/FastQC/..."
+echo $cmdQC
+eval $cmdQC
+
 # ~~~~~~~~~~ TRIMMOMATIC ~~~~~~~~~~
+echo "Initiating Trimmomatic"
 adapters="$HOME/rds/hpc-work/Software/Trimmomatic-0.39/adapters/TruSeq3-SE.fa"
 
 cmd1="Scripts/02_trimmomatic.sh $raw $trimmed $adapters $nTasks"
@@ -65,14 +72,22 @@ echo $cmd1
 eval $cmd1 
 
 # ~~~~~~~~~~ FASTQC ~~~~~~~~~~
+echo "Initiating FastQC"
+cmdQC="$HOME/rds/hpc-work/Software/FastQC/..."
+echo $cmdQC
+eval $cmdQC
 
 # ~~~~~~~~~~ STAR ~~~~~~~~~~
-
+echo "Initiating STAR Alignment"
 cmd2="Scripts/03_read_alignment.sh $trimmed $trimmed $adapters $nTasks"
 echo $cmd2 
 eval $cmd2 
 
-
+# ~~~~~~~~~~ STAR ~~~~~~~~~~
+echo "Initiating STAR Alignment"
+cmd2="Scripts/03_read_alignment.sh $trimmed $trimmed $adapters $nTasks"
+echo $cmd2 
+eval $cmd2 
 
 
 
