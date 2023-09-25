@@ -12,12 +12,10 @@
 #SBATCH -p cclake
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH -D $HOME/rds/hpc-work 
 #SBATCH --time=02:00:00
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=mm2458@cam.ac.uk
 #SBATCH --mail-type=ALL
-#SBATCH --output=eofiles/02_trimmomatic.log
 #SBATCH --no-requeue
 
 # ~~~~~~~~~~ COMPUTE ALLOCATIONS  ~~~~~~~~~~
@@ -30,21 +28,18 @@ mpi_tasks_per_node=$(echo "$SLURM_TASKS_PER_NODE" | sed -e  's/^\([0-9][0-9]*\).
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
 # ~~~~~~~~~~ DEFAULT REQUIREMENTS ~~~~~~~~~~
-#. /etc/profile.d/modules.sh                # Leave this line (enables the module command)
+. /etc/profile.d/modules.sh                # Leave this line (enables the module command)
 #module purge                               # Removes all modules still loaded
-#module load rhel8/default-icl              # REQUIRED - loads the basic environment
-
-#module load pkg-config-0.29.2-gcc-6.2.0-we4glmw
-#module load gcc/9
+#module load rhel7/default-ccl              # REQUIRED - loads the basic environment
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> PREPARE EXECUTABLE                        <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
 # ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-APP="Scripts/02_trimmomatic.sh"
+APP="bash Scripts/02_trimmomatic.sh"
 
-ARGS="$HOME/rds/hpc-work/Data/Fasta_files $HOME/rds/hpc-work/Data/Trimmed $HOME/rds/hpc-work/Software/Trimmomatic-0.39/adapters/TruSeq3-SE.fa $SLURM_NTASKS"
+ARGS="$numtasks"
 
 workdir="$SLURM_SUBMIT_DIR"  # The value of SLURM_SUBMIT_DIR sets workdir to the directory
                              # in which sbatch is run.
