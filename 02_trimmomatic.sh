@@ -14,23 +14,20 @@ nTasks=$1                                                                       
 TRIMMOMATIC="$HOME/rds/hpc-work/Software/trimmomatic-0.39.jar"
 
 ## EXECUTION
-for infile in $raw/*_1.fq.gz
+for file1 in $raw/*_1.fq.gz
 do
+        file2=${file1%%_1.fq.gz}"_2.fq.gz" # Instantiate R2 singleton (PAIRED)
 
-  base=$(basename ${infile} _1.fq.gz) # Get file basename
-  fq1=${base}_1.fq.gz # Instantiate R1 singleton
-  fq2=${base}_2.fq.gz # Instantiate R2 singleton (PAIRED)
+        fq1=$(basename "${file1}")
+        fq2=$(basename "${file2}")
+        base=${fq1%%_1.fq.gz}
 
-  output=${base}
+        echo $fq1
+        echo $fq2
+        echo $base
 
-  # Run trimmomatic
-  java -jar "$TRIMMOMATIC" \
-      PE \
-      -threads $nTasks \
-      -phred33 \
-      -basein $raw/${fq1} $raw/${fq2} \
-      -baseout $trim/${output}_R1p.trimmed.fastq.gz $trim/${output}_R1u.trimmed.fastq.gz $trim/${output}_R2p.trimmed.fastq.gz $trim/${output}_R2u.trimmed.fastq.gz \
-      ILLUMINACLIP:"$adapters":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+        ## Run trimmomatic
+        java -jar "$TRIMMOMATIC" PE $raw/$fq1 $raw/$fq2 $trim/${base}_R1p.trimmed.fastq.gz $trim/${base}_R1u.trimmed.fastq.gz $trim/${base}_R2p.trimmed.fastq.gz $trim/${base}_R2u.trimmed.fastq.gz ILLUMINACLIP:"$adapters":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 done
 wait
 
