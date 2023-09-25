@@ -25,9 +25,15 @@ do
         echo $fq1
         echo $fq2
         echo $base
+        
+        CHECKFILE="$trim/${base}_R1u.trimmed.fastq.gz"
 
-        ## Run trimmomatic
-        java -jar "$TRIMMOMATIC" PE $raw/$fq1 $raw/$fq2 $trim/${base}_R1p.trimmed.fastq.gz $trim/${base}_R1u.trimmed.fastq.gz $trim/${base}_R2p.trimmed.fastq.gz $trim/${base}_R2u.trimmed.fastq.gz ILLUMINACLIP:"$adapters":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+        if [-f "$CHECKFILE"]; then
+                echo "$CHECKFILE exists. Skipping file."
+        else
+                ## Run trimmomatic
+                java -jar "$TRIMMOMATIC" PE $raw/$fq1 $raw/$fq2 $trim/${base}_R1p.trimmed.fastq.gz $trim/${base}_R1u.trimmed.fastq.gz $trim/${base}_R2p.trimmed.fastq.gz $trim/${base}_R2u.trimmed.fastq.gz ILLUMINACLIP:"$adapters":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+        fi 
 done
 wait
 
