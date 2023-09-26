@@ -5,6 +5,8 @@
 
 echo "Genome Building with STAR {03A_genome_build.sh}" # Declare start of trimming process
 
+module star/2.5.0a
+
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> VARIABLE DECLARATIONS                     <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
