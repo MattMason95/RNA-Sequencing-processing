@@ -39,7 +39,7 @@ gunzip -k Mus_musculus.GRCm39.110.gtf.gz
 
 ## GENOME INDEXING
 cmd1="STAR --runThreadN $nTasks --runMode genomeGenerate \
---genomeDIR $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
+--genomeDir $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
 --genomeFastaFiles $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.dna.primary_assembly.fa \
 --sjdbGTFfile $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
 --sjdbOverhang 149"
