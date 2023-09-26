@@ -1,23 +1,25 @@
 #!/bin/bash
 # AUTHOR: Matthew Mason
 # EDITED: 10.2023
-# DESC: Pipeline module for Trimmomatic trimming of reads
-
+# DESC: Pipeline module for building mouse genome index with STAR
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> SBATCH DIRECTIVES                         <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-#SBATCH -J mm2458_Trimmomatic
+#SBATCH -J mm2458_GenomeBuild
 #SBATCH -A SPILLANTINI-SL3-CPU
-#SBATCH -p cclake
+#SBATCH -p icelake
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=32
-#SBATCH --time=03:00:00
+#SBATCH --cpus-per-task=48
+#SBATCH --time=06:00:00
+#SBATCH --output=GenomeBuild_%A.out
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=mm2458@cam.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH --no-requeue
+
+export nTasks=$SLURM_CPUS_PER_TASK
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> LOAD ENVIRONMENT                          <>
@@ -26,14 +28,14 @@
 # ~~~~~~~~~~ DEFAULT REQUIREMENTS ~~~~~~~~~~
 . /etc/profile.d/modules.sh                # Leave this line (enables the module command)
 module purge                               # Removes all modules still loaded
-module load rhel7/default-ccl              # REQUIRED - loads the basic environment
+module load rhel8/default-icl              # REQUIRED - loads the basic environment
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> PREPARE EXECUTABLE                        <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
 # ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-bash Scripts/02_trimmomatic.sh
+bash Scripts/03A_genome_build.sh $nTasks
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"

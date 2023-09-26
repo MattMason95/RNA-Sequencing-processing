@@ -1,23 +1,25 @@
 #!/bin/bash
 # AUTHOR: Matthew Mason
 # EDITED: 10.2023
-# DESC: Pipeline module for Trimmomatic trimming of reads
+# DESC: Pipeline module for aligning trimmed reads to mouse genome index
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> SBATCH DIRECTIVES                         <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-#SBATCH -J mm2458_Trimmomatic
+#SBATCH -J mm2458_ReadAlignment
 #SBATCH -A SPILLANTINI-SL3-CPU
 #SBATCH -p cclake
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=32
-#SBATCH --time=03:00:00
+#SBATCH --cpus-per-task=48
+#SBATCH --time=12:00:00
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=mm2458@cam.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH --no-requeue
+
+export nTasks=$SLURM_CPUS_PER_TASK
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> LOAD ENVIRONMENT                          <>
@@ -33,7 +35,13 @@ module load rhel7/default-ccl              # REQUIRED - loads the basic environm
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
 # ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-bash Scripts/02_trimmomatic.sh
+# Passed variables:
+# 1 = Directory to READ trimmed reads
+# 2 = Directory to WRITE BAM files 
+# 3 = Directory to WRITE FPKM files
+# 4 = Directory to WRITE CTAB files
+# 5 = SLURM N-tasks
+bash Scripts/03B_read_alignment.sh $HOME/rds/hpc-work/Data/Trimmed $HOME/rds/hpc-work/Data/BAM $HOME/rds/hpc-work/Data/FPKM $HOME/rds/hpc-work/Data/CTAB $nTasks
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"

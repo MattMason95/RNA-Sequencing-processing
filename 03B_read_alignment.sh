@@ -9,9 +9,7 @@ echo "Read Alignment with STAR {03_read_alignment.sh}" # Declare start of trimmi
 # <> BUILD ENVIRONMENT                         <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-module load $HOME/rds/hpc-work/Software/STAR
-module load $HOME/rds/hpc-work/Software/samtools
-# module load $HOME/rds/hpc-work 
+module star/2.5.0a
 
 ## PASSED VARIABLES
 
