@@ -8,11 +8,12 @@
 
 #SBATCH -J mm2458_GenomeBuild
 #SBATCH -A SPILLANTINI-SL3-CPU
-#SBATCH -p cclake
+#SBATCH -p icelake
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=48
 #SBATCH --time=06:00:00
+#SBATCH --output=GenomeBuild_%A.out
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=mm2458@cam.ac.uk
 #SBATCH --mail-type=ALL
@@ -27,7 +28,7 @@ export nTasks=$SLURM_CPUS_PER_TASK
 # ~~~~~~~~~~ DEFAULT REQUIREMENTS ~~~~~~~~~~
 . /etc/profile.d/modules.sh                # Leave this line (enables the module command)
 module purge                               # Removes all modules still loaded
-module load rhel7/default-ccl              # REQUIRED - loads the basic environment
+module load rhel8/default-icl              # REQUIRED - loads the basic environment
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> PREPARE EXECUTABLE                        <>
