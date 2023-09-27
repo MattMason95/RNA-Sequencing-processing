@@ -32,7 +32,7 @@ fq1=$(basename "${file1}")
 fq2=$(basename "${file2}")
 base=${fq1%%_R1p.trimmed.fastq.gz}
 
-if find  "$fpkm" -name "*$base*" ]; then
+if find  "$fpkm" -name "*$base*"; then
   echo "$CHECKFILE exists. Skipping file."
 else
         
