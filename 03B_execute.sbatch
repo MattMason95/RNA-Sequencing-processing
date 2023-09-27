@@ -41,7 +41,7 @@ module load rhel7/default-ccl              # REQUIRED - loads the basic environm
 # 3 = Directory to WRITE FPKM files
 # 4 = Directory to WRITE CTAB files
 # 5 = SLURM N-tasks
-bash Scripts/03B_read_alignment.sh $HOME/rds/hpc-work/Data/Trimmed $HOME/rds/hpc-work/Data/BAM $HOME/rds/hpc-work/Data/FPKM $HOME/rds/hpc-work/Data/CTAB $nTasks
+bash Scripts/03B_genome_align.sh $HOME/rds/hpc-work/Data/Trimmed $HOME/rds/hpc-work/Data/BAM $HOME/rds/hpc-work/Data/FPKM $HOME/rds/hpc-work/Data/CTAB $nTasks
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"
