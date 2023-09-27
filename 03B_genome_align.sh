@@ -9,7 +9,7 @@ echo "Read Alignment with STAR {03_read_alignment.sh}" # Declare start of trimmi
 # <> BUILD ENVIRONMENT                         <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-module star/2.5.0a
+module load star/2.5.0a
 
 ## PASSED VARIABLES 
 
