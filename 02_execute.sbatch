@@ -34,8 +34,17 @@ module load rhel8/default-icl              # REQUIRED - loads the basic environm
 # <> PREPARE EXECUTABLE                        <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
+# ~~~~~~~~~~ PREPARE SAMPLE IDS ~~~~~~~~~~~~~~~
+## SAMPLE CSV FILE
+SAMPLES="$HOME/rds/hpc-work/Data/Sample_ID.csv"
+
+## EXECUTION
+sample=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 1)
+fq1=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 2)
+fq2=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 3)
+
 # ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-bash Scripts/02_trimmomatic.sh $SLURM_ARRAY_TASK_ID
+bash Scripts/02_trimmomatic.sh "$fq1" "$fq2"
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"
