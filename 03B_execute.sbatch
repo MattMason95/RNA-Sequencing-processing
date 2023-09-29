@@ -9,8 +9,8 @@
 
 #SBATCH -J mm2458_ReadAlignment
 #SBATCH -A SPILLANTINI-SL3-CPU
-#SBATCH -p cclake
-#SBATCH --nodes=1
+#SBATCH -p icelake
+#SBATCH --array=1-4
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=48
 #SBATCH --time=12:00:00
@@ -34,14 +34,17 @@ module load rhel7/default-ccl              # REQUIRED - loads the basic environm
 # <> PREPARE EXECUTABLE                        <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
+# ~~~~~~~~~~ PREPARE SAMPLE IDS ~~~~~~~~~~~~~~~
+## SAMPLE CSV FILE
+SAMPLES="$HOME/rds/hpc-work/Data/Sample_ID.csv"
+
+## EXECUTION
+sample=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 1)
+fq1=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 2)
+fq2=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 3)
+
 # ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-# Passed variables:
-# 1 = Directory to READ trimmed reads
-# 2 = Directory to WRITE BAM files 
-# 3 = Directory to WRITE FPKM files
-# 4 = Directory to WRITE CTAB files
-# 5 = SLURM N-tasks
-bash Scripts/03B_genome_align.sh $HOME/rds/hpc-work/Data/Trimmed $HOME/rds/hpc-work/Data/BAM $HOME/rds/hpc-work/Data/FPKM $HOME/rds/hpc-work/Data/CTAB $nTasks
+bash Scripts/03B_genome_align.sh "$fq1" "$fq2"
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"
