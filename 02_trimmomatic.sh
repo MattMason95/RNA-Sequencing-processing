@@ -7,19 +7,14 @@ echo "Read Trimming {02_trimmomatic.sh}" # Declare start of trimming process
 ## PASSED VARIABLES
 raw="$HOME/rds/hpc-work/Data/Fasta_files"                                        #Location to read raw reads
 trim="$HOME/rds/hpc-work/Data/Trimmed"                                           #Location to write trimmed reads
-adapters="$HOME/rds/hpc-work/Software/Trimmomatic-0.39/adapters/TruSeq3-SE.fa"   #Location to read adapaters
-slurmID=$1                                                                        #Naming convention for raw reads
+adapters="$HOME/rds/hpc-work/Software/Trimmomatic-0.39/adapters/TruSeq3-SE.fa"   #Location to read adapaters   
 
 ## TRIMMOMATIC LOCATION
 TRIMMOMATIC="$HOME/rds/hpc-work/Software/trimmomatic-0.39.jar"
 
-## SAMPLE CSV FILE
-SAMPLES="$HOME/rds/hpc-work/Data/Sample_ID.csv"
-
 ## EXECUTION
-sample=$(head -n $slurmID $SAMPLES | tail -n 1 | cut -d "," -f 1)
-fq1=$(head -n $slurmID $SAMPLES | tail -n 1 | cut -d "," -f 2)
-fq2=$(head -n $slurmID $SAMPLES | tail -n 1 | cut -d "," -f 3)
+fq1=$1
+fq2=$2
 
 base=${fq1%%_1.fq.gz}
 
