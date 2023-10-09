@@ -1,25 +1,25 @@
 #!/bin/bash
 # AUTHOR: Matthew Mason
 # EDITED: 10.2023
-# DESC: Pipeline module for Trimmomatic trimming of reads
+# DESC: Pipeline module for aligning trimmed reads to mouse genome index
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> SBATCH DIRECTIVES                         <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-#SBATCH -J mm2458_Trimmomatic
+#SBATCH -J mm2458_ReadFastQC
 #SBATCH -A SPILLANTINI-SL3-CPU
 #SBATCH -p icelake
-#SBATCH --array=1-4
+#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=48
+#SBATCH --cpus-per-task=40
 #SBATCH --time=12:00:00
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=mm2458@cam.ac.uk
 #SBATCH --mail-type=ALL
 #SBATCH --no-requeue
 
-export $SLURM_ARRAY_TASK_ID
+export nTasks=$SLURM_CPUS_PER_TASK
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> LOAD ENVIRONMENT                          <>
@@ -34,17 +34,9 @@ module load rhel8/default-icl              # REQUIRED - loads the basic environm
 # <> PREPARE EXECUTABLE                        <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-# ~~~~~~~~~~ PREPARE SAMPLE IDS ~~~~~~~~~~~~~~~
-## SAMPLE CSV FILE
-SAMPLES="$HOME/rds/hpc-work/Data/Sample_ID.csv"
+# ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~
 
-## EXECUTION
-sample=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 1)
-fq1=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 2)
-fq2=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 3)
-
-# ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-bash Scripts/02_trimmomatic.sh "$fq1" "$fq2"
+bash Scripts/01_fastQC.sh $nTasks
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"
@@ -57,6 +49,6 @@ if [ "$SLURM_JOB_NODELIST" ]; then
         cat $NODEFILE | uniq > machine.file.$JOBID
         echo -e "\nNodes allocated:\n================"
         echo `cat machine.file.$JOBID | sed -e 's/\..*$//g'`
-        fi
+fi
 
 ## FIN

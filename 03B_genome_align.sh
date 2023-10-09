@@ -12,38 +12,36 @@ echo "Read Alignment with STAR {03_read_alignment.sh}" # Declare start of trimmi
 module load star/2.5.0a
 
 ## PASSED VARIABLES 
+fq1=$1
+fq2=$2
 
-trim=$1    #Location to read trimmed reads
-bam=$2     #Location to write BAM files
-fpkm=$3    #Location to write FPKM files
-ctab=$4    #Location to write CTAB files
+## STATIC VARIABLES 
+trim="$HOME/rds/hpc-work/Data/Trimmed"    #Location to read trimmed reads
+bam="$HOME/rds/hpc-work/Data/BAM"     #Location to write BAM files
+fpkm="$HOME/rds/hpc-work/Data/FPKM"    #Location to write FPKM files
+ctab="$HOME/rds/hpc-work/Data/CTAB"    #Location to write CTAB files
 nTasks=$5  #Number of threads committed to the job
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> READ ALIGNMENT                            <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-for file1 in $trim/*_R1p.trimmed.fastq.gz 
-do
-
-file2=${file1%%_R1p.trimmed.fastq.gz}"_R2p.trimmed.fastq.gz" # Instantiate R2 singleton (PAIRED)
-
-fq1=$(basename "${file1}")
-fq2=$(basename "${file2}")
-base=${fq1%%_R1p.trimmed.fastq.gz}
+trimFQ1=${fq1%%_1.fq.gz}"_R1p.trimmed.fastq.gz"
+trimFQ2=${fq2%%_2.fq.gz}"_R2p.trimmed.fastq.gz"
+base=${fq1%%_1.fq.gz}
 
 if find  "$fpkm" -name "*$base*"; then
   echo "$CHECKFILE exists. Skipping file."
 else
         
-  echo $fq1
-  echo $fq2
+  echo $trimFQ1
+  echo $trimFQ2
   echo $base
 
   cmd2="STAR \
-  --runThreadN $nTasks \
+  --runThreadN 40 \
   --genomeDir $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
-  --readFilesIn ${fq1} ${fq2} \
+  --readFilesIn $trim/$trimFQ1 $trim/$trimFQ2 \
   --readFilesCommand zcat \
   --outFilterType BySJout \
   --outFilterMultimapNmax 20 \
@@ -58,8 +56,8 @@ else
   --outFileNamePrefix ${base}_ \
   --quantMode GeneCounts"
 
-  #echo $cmd2
-  #eval $cmd2
+  echo $cmd2
+  eval $cmd2
 fi 
 
 done
