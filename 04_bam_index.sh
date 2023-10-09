@@ -9,10 +9,15 @@ echo "Indexing of BAM files {04_bam_index.sh}" # Declare start of trimming proce
 # <> BUILD ENVIRONMENT                          <>
 # <><><><><><><><><><><><><><><><><><><><><><><><>
 
-module load samtools/1.10 
+# Always add this command to your scripts
+source $(conda info --base)/etc/profile.d/conda.sh
+
+conda activate bioinformatics
+
+echo $CONDA_DEFAULT_ENV
 
 ## PASSED VARIABLES 
-sample=$1
+sample="$1"
 
 ## STATIC VARIABLES 
 ALIGNED="$HOME/rds/hpc-work/Data/Aligned_reads"    #Location to read trimmed reads
@@ -22,18 +27,24 @@ BAI="$HOME/rds/hpc-work/Data/BAI"     #Location to write BAM files
 # <> READ INDEXING                              <>
 # <><><><><><><><><><><><><><><><><><><><><><><><>
 
-## ACCESS ARRAY-SPECIFIC SAMPLE DIR. 
-cd $ALIGNED/$sample
+echo sample: "$sample"
 
 ## FIND BAM FILE 
-bam=$*.out.bam
+for bam in $ALIGNED/$sample/*.out.bam;
+do
+
+base=$(basename "$bam")
 
 echo $bam
+echo $base
+
+cd $ALIGNED/$sample
+
+echo "$PWD"
 
 ## EXECUTE
-cmd1="samtools index $bam --output $BAI"
+cmd1="samtools index $base"
 
 echo $cmd1
 eval $cmd1
-
-## FIN
+done
