@@ -45,7 +45,7 @@ fq1=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 2)
 fq2=$(head -n $SLURM_ARRAY_TASK_ID $SAMPLES | tail -n 1 | cut -d "," -f 3)
 
 # ~~~~~~~~~~ EXECUTEABLE ~~~~~~~~~~
-bash Scripts/04B_flagstats.sh "$sample"
+bash Scripts/04C_coverage.sh "$sample"
 
 echo "JobID: $JOBID\n======"
 echo "Time: `date`"
