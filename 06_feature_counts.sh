@@ -37,12 +37,16 @@ cd $ALIGNED/$sample
 
 echo pwd: "$PWD"
 
-## EXECUTE
-cmd1="picard MarkDuplicates \
-  I=$base \
-  O=$output \
-  M=$base.txt"
+## EXECUTE FEATURECOUNTS
+cmd1="featureCounts \
+  -p --countReadPairs \
+  -a $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
+  -t exon \
+  -g gene_id \
+  -o ${base}_featureCounts.txt \
+  $base"
 
 echo $cmd1
 eval $cmd1
+
 done
