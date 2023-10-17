@@ -3,7 +3,7 @@
 # EDITED: 10.2023
 # DESC: Full assembly pipeline of BASH scripts for RNA-seq read alignment and quantification
 
-echo "Indexing of BAM files {04_bam_index.sh}" # Declare start of trimming process
+echo "Counting of fragments per genomic locus {06_feature_counts.sh}" # Declare start of trimming process
 
 # <><><><><><><><><><><><><><><><><><><><><><><><>
 # <> BUILD ENVIRONMENT                          <>
