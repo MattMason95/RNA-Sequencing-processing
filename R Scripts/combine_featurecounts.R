@@ -15,7 +15,7 @@ library(purrr)
 # <><><><><><><><><><><><><><><><><><><><><><><><>
 
 ## Fetch files matching pattern
-FILES<- list.files(pattern="*feature_counts.txt$", recursive=True, full.names=True)
+FILES<- list.files(pattern="*_featureCounts.txt$", recursive=True, full.names=True)
 
 ## Function for accessing the relevant columns of the individual files
 countMerger<- function(f){
