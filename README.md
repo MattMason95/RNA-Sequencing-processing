@@ -2,7 +2,7 @@
 Consolidation of BASH and R scripts for the pre-processing of raw RNA-sequencing data.\
 
 The Bash Script directory contains an array of scripts for performing the pre-processing and alignment of raw FastQ files.\
-Each script has an accompanying "*_execute.sbatch" script for deploying the scripts to the Cambridge CSD3 using SLURM Job Scheduling.\
+Each script has an accompanying "*_execute.sbatch" script for deploying the scripts to the Cambridge CSD3 using SLURM Job Scheduling.
 
 ## Libraries used:
 FastQC -> Read Quality Control\
