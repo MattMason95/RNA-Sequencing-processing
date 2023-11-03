@@ -67,7 +67,7 @@ cd Data
 mkdir -p miso_output
 cd miso_output
 
-BAM="$HOME/rds/hpc-work/Data/Aligned_reads/$sample/*.out.rd.bam"i
+BAM="$HOME/rds/hpc-work/Data/Aligned_reads/$sample/*.out.rd.bam"
 IndexDIR="$HOME/rds/hpc-work/Data/ENSEMBL/indexed_gff"
 
 cmd3="miso --run $IndexDIR $BAM --output-dir ./miso_output --read-len 150 --paired-end 250 15 --use-cluster"
