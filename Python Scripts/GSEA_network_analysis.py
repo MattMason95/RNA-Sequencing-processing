@@ -117,7 +117,7 @@ def significantGenesets(zippedList,threshold,unzip=False):
       return geneList, nesList, fdrList
 
 ## In the event that I want to keep the elements zipped, unzip=False will return the native filteredGeneset object
- else:
+  else:
       return filteredGenesets
  
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
