@@ -2,6 +2,7 @@
 # The aim of this tool is to compress the informational complexity of the data produced by GSEA by building a relational graph with NetworkX.
 # In this graph, Nodes represent genesets and Edges represent the Jaccard index of shared information between the two genesets. 
 # Subgraphs within the network will be evaluated with basic NLP to summarise the semantic content of each subgraph (i.e. the biological theme of genesets) 
+# Author: Matthew Mason
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Import libraries 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,3 +238,70 @@ def fileAccessor(homeDirectory,jaccardFilter):
       
   
   return masterNetwork, masterMeta, masterStats, masterGeneLookup
+ 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+def iterativePlotting(network,meta,save=True):
+  '''
+  This function will iteratively plot the Network graphs for each condition within the data extracted from the previous function using the Python library NetworkX.
+  '''
+  ## Import specific libraries
+  import sklearn  
+  from sklearn.preprocessing import minmax_scale
+
+  ## Option for automatic saving of plots to output path
+  saves = [True,False]
+  if save not in saves:
+    raise ValueError('Save requires a boolean operator: True or False.')
+
+  ## Iterate through the different conditions within the network analysis dataframe 
+  for condition in network['condition'].unique():
+    saveName = str(condition)
+
+    ## Truncate to condition 
+    shortNetwork = networkDf[networkDf['condition'] == condition]
+    shortMeta = meta[meta['condition'] == condition]
+
+    ## Generate edgelist from dataframe
+    graph = nx.from_pandas_edgelist(shortNetwork, source='node1', target='node2', edge_attr='jaccard_index')
+
+    ## Specify that no edges are created between nodes with a Jaccard index of < 0.5 - remove tham from the edge list 
+    noEdge = list(filter(lambda e: e[2] < 0.5, (e for e in graph.edges.data('jaccard_index'))))
+    noEdgePairs = list(e[:2] for e in noEdge)
+    
+    graph.remove_edges_from(noEdgePairs)
+
+    ## Generate colour maps from the meta data provided - colour red if upregulated or blue if downregulated
+    colorMap = []
+    for node in graph:
+      if node in list(shortMeta['node'][shortMeta['upregulated?'] == 1]):
+        colorMap.append('#A43D40')
+      else: 
+        colorMap.append('#507D96')
+
+    ## Extract the NES for each of the plotted nodes in the graph 
+    nodeMap = []
+    for node in graph:
+      if node in list(shortMeta['node']):
+        nes = shortMeta['nes'][shortMeta['node'] == node].values[0]
+        nodeMap.append(nes)
+      else: 
+        continue     
+
+    ## Normalise the scaling of the extracted NES values to use for node sizes
+    normalisedNodeMap = minmax_scale(nodeMap,feature_range=(-2,2))
+
+    ## Generate force-directed network graph using the NetworkX library
+    pos = nx.spring_layout(graph, k=2/np.sqrt(len(graph.nodes())), iterations=90, seed=101, weight='jaccard_index',center=(0,0))
+    
+    ## Plotting
+    fig, ax = plt.subplots(1,1,figsize=(12,12))
+    fig = nx.draw(graph,pos=pos,node_color=colorMap,edgecolors='0.2',edge_color='0.2',linewidths=2,node_size=((normalisedNodeMap+3)*35),width=2)
+    plt.tight_layout()
+
+    ## Save if requested
+    if save == True:
+      plt.savefig(f'Images/{saveName}.png',dpi=150)
+    else:
+      continue
+
