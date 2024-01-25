@@ -8,7 +8,7 @@ class RBMotif_finder:
         RBmotif_finder is a function for analysing submitted fasta sequences for the presence of RNA-binding factor motif sites.
         
     '''
-    def __init__(self, fasta_path, motif_path, background_path, threshold=0.8, measurement='hamming'):
+    def __init__(self, fasta_path, motif_path, background_path=None, threshold=0.8, measurement='hamming'):
         self.fasta_path = fasta_path
         self.motif_path = motif_path
         self.background_path = background_path
@@ -104,10 +104,15 @@ class RBMotif_finder:
                
         return output
                     
-            
-    def weighted_rank(self):
+    ## To do: 
+        ## Build up background model for statistical validation
+        ## Build up the weighted_rank function 
+        ## Try with some real FASTA sequences and real motifs 
+        
+    ##def weighted_rank(self):
+        ''' 
+        The weighted rank function accounts for the propensity of suboptimal motifs to cluster around the significant motif.
+        
+        '''
 
     
-    
-
-
