@@ -6,9 +6,10 @@ class RBMotif_finder:
         RBmotif_finder is a function for analysing submitted fasta sequences for the presence of RNA-binding factor motif sites.
         
     '''
-    def __init__(self, fasta_path, threshold=0.8, measurement='hamming'):
+    def __init__(self, fasta_path, motif_path, threshold=0.8, measurement='hamming'):
         self.fasta_path = fasta_path
         self.threshold = threshold
+        self.motif_path = motif_path
         self.measurement = measurement   
 
         valid_measurements = ['hamming']
@@ -18,17 +19,35 @@ class RBMotif_finder:
         if isinstance(self.threshold, float):
             pass
         else:
-            raise Exception(f"Invalid data type. Only integers can be passed to threshold parameter.")
-            
-    
-    def fasta_parser(self):
-        data = pd.read_csv(self.fasta_path,sep='\t',header=None)
-        return data
-        
+            raise Exception(f"Invalid data type. Only integers can be passed to threshold parameter.")       
+    # ~~~~~~~~~~~~~~~~~~~~~~
+    def load_fasta(self):
+        fasta = pd.read_csv(self.fasta_path,sep='\t',header=None)
+        labels = fasta.iloc[::2]
+        sequences = fasta.iloc[1::2]
 
-    def do_something(self):
-        parsed_data = self.fasta_parser()
-        print(parsed_data)
+        if len(labels) != len(sequences):
+            raise Exception('Mismatch between number of extracted labels and extracted sequences.')
+        
+        return labels, fasta
+    # ~~~~~~~~~~~~~~~~~~~~~~
+    def load_motifs(self):
+        motifs = pd.read_csv(self.motif_path,header=None)
+        return motifs
+
+    def compute_distances(self):
+        labels,sequences = self.load_fasta()
+        motifs = self.load_motifs()
+        
+        print(f'Loaded {len(labels)} FASTA sequences.')
+        print(f'Scanning with {len(motifs)} RNA binding motifs.')
+        print('---------------------------------------------------------------')
+
+
+    
+
+
+
     # For each K-mer, scan through the fasta sequence with a read window of length K. How will this be calculated? 
         # e.g. if sequence is 5 and k-mer is 3, there are 3 overlapping read windows; for a sequence length of 6, there are 4. What formula dictates this relationship?
         #   
