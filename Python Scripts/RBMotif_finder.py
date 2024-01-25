@@ -33,17 +33,32 @@ class RBMotif_finder:
     # ~~~~~~~~~~~~~~~~~~~~~~
     def load_motifs(self):
         motifs = pd.read_csv(self.motif_path,header=None)
-        return motifs
+        motif_labels = motifs.iloc[:,0]
+        motif_seqs = motifs.iloc[:,1]
+        
+        if len(motif_labels) != len(motif_seqs):
+            raise Exception('Mismatch between number of extracted labels and extracted sequences.')
+        return motif_label, motif_seq
 
+    def hamming_distance(self):
+    
     def compute_distances(self):
         labels,sequences = self.load_fasta()
-        motifs = self.load_motifs()
-        
+        motif_labels,motif_seqs = self.load_motifs()
+
         print(f'Loaded {len(labels)} FASTA sequences.')
-        print(f'Scanning with {len(motifs)} RNA binding motifs.')
+        print(f'Scanning with {len(motifs_labels)} RNA binding motifs.')
         print('---------------------------------------------------------------')
-
-
+        print(f'Calculating distance with {self.measurement}')
+        
+        if self.measurement == 'hamming':
+            for label, sequence in zip(labels,sequences):
+                for motif_label, motif_seq in zip(motif_labels, motif_seqs):
+                    
+                    motif_length = len(motif_seq
+            
+            
+    
     
 
 
