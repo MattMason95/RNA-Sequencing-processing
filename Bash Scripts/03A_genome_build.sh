@@ -5,20 +5,29 @@
 
 echo "Genome Building with STAR {03A_genome_build.sh}" # Declare start of trimming process
 
-module star/2.5.0a
+# <><><><><><><><><><><><><><><><><><><><><><><><>
+# <> BUILD ENVIRONMENT                          <>
+# <><><><><><><><><><><><><><><><><><><><><><><><>
+
+# Always add this command to your scripts
+source $(conda info --base)/etc/profile.d/conda.sh
+
+conda activate bioinformatics
+
+echo enviroment: $CONDA_DEFAULT_ENV
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> VARIABLE DECLARATIONS                     <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
-nTasks=$1
+nTasks=24
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> FILE AND DIRECTORY PREPARATION            <>
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 
 ## FILE DOWNLOAD
-cd $HOME/rds/hpc-work/Data
+cd Data
 mkdir ENSEMBL
 cd ENSEMBL
 mkdir STAR 
@@ -30,8 +39,8 @@ wget https://ftp.ensembl.org/pub/release-110/gtf/mus_musculus/Mus_musculus.GRCm3
 wget https://ftp.ensembl.org/pub/release-110/variation/vcf/mus_musculus/mus_musculus.vcf.gz                        #SNP variations of mouse genome
 
 ## UNZIP ENSEMBL FILES
-gunzip -k Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
-gunzip -k Mus_musculus.GRCm39.110.gtf.gz
+gunzip Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
+gunzip Mus_musculus.GRCm39.110.gtf.gz
 
 # <><><>><><><><><><><><><><><><><><><><><><><><>
 # <> GENOME BUILDING                           <>
@@ -42,9 +51,21 @@ cmd1="STAR --runThreadN $nTasks --runMode genomeGenerate \
 --genomeDir $HOME/rds/hpc-work/Data/ENSEMBL/STAR \
 --genomeFastaFiles $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.dna.primary_assembly.fa \
 --sjdbGTFfile $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
---sjdbOverhang 149"
+--sjdbOverhang 149 \
+--sjdbGTFtagExonParentTranscript Parent"
 
 echo $cmd1
-eval $cmd1 
+eval $cmd1
+
+## Two-pass Genome Building
+# cmd2="STAR --runThreadN $nTasks --runMode genomeGenerate \ 
+# --genomeDir $HOME/rds/hpc-work/Data/ENSEMBL/Two_pass \ 
+# --genomeFastaFiles $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.dna.primary_assembly.fa \
+# --sjdbGTFfile $HOME/rds/hpc-work/Data/ENSEMBL/Mus_musculus.GRCm39.110.gtf \
+# --sjdbFileChrStartEnd SJ_out_filtered.tab \
+# --sjdbOverhang 149"
+
+# echo $cmd2
+# eval $cmd2
 
 ## FIN
