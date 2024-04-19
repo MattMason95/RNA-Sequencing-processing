@@ -149,9 +149,9 @@ def fileAccessor(homeDirectory,jaccardFilter):
   ## Build output containers 
   networkTemp = []
   metaTemp = []
-  masterGeneLookup = []
   masterStats = []
-
+  masterGeneLookup = {}
+  
   ## Iterate through the target file paths identified above
   for target in destinations:
     ## At this indentation level, we are within one of the target folder paths, so handling of gmt and edb data unique to one folder - i.e. unique to one pairing of conditions 
@@ -182,17 +182,22 @@ def fileAccessor(homeDirectory,jaccardFilter):
           continue
         
     ## First handle the .gmt data
-    ## Build output containers for the full list of module names and associated genes from those modules (within .gmt data)
+    ## Build output containers for the full list of module names and associated genes from those modules (within .gmt data) and the dictionary for lookup 
     moduleNames = []
     moduleGenes = []
-
+    geneDict = {}
+    
     for i in range(len(gmtData)):
       ## Iterate through the .gmt data to extract the geneset/module name and the constituent genes of that module
       name = gmtData[i][0]
       genes = gmtData[i][2:]
+      geneDict[name] = genes
       moduleNames.append(name)
       moduleGenes.append(genes)
-
+    
+    ## Update out-of-loop dictionary for gene lookup
+    masterGeneLookup.update(geneDict)
+        
     ## Zip together module names and module genes to avoid mismatching
     modulesZipped = list(zip(moduleNames,moduleGenes))
     
@@ -206,7 +211,6 @@ def fileAccessor(homeDirectory,jaccardFilter):
     ## Extract geneset names from the significant geneset data and use this to truncate the modulesZipped variable to include only the statistically significant genesets                
     sigGenesets = [x[0] for x in statsDataThresholded]
     sigModules = [x for x in modulesZipped if x[0] in sigGenesets]
-    geneLookup = list(zip(moduleNames,moduleGenes,target))
 
     ## Calculate the Jaccard indices for the significantly enriched genesets
     jaccardIndices = Jaccard([x[0] for x in sigModules],[x[1] for x in sigModules])
@@ -304,4 +308,97 @@ def iterativePlotting(network,meta,save=True):
       plt.savefig(f'Images/{saveName}.png',dpi=150)
     else:
       continue
+      
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def clusterInformation(graph,clustersize):
+    '''
+    This function will perform several different manipulations:
+    - Filtering the subgraph network to exclude subgraphs below a defined threshold
+    - Evaluate annotation terminology with tokenisation
+    - Compute average normalised enrichment score from the constituent genesets.
+    '''
+  
+    from collections import Counter
+
+    ## Access all of the subgraphs detected within the NetworkX graph object
+    subGraphs = nx.connected_components(graph)
+    
+    largeClusters = []
+    graphIndex = []
+    
+    ## Iteratively filter subgraphs that are larger than the user-defined clustersize threshold
+    for idx,i in enumerate(subGraphs):
+        if len(i) > clustersize:
+            largeClusters.append(i)
+            graphIndex.append(idx)
+        else:
+            continue
+    outputClusters = list(zip(graphIndex,largeClusters))
+
+    ## Prepare output containers for geneset tokenisation 
+    commonWords = []
+    clusterIndex = []
+    
+    ## Iterate through the genesets within each subgraph and quantify tokens 
+    for idx, i in outputClusters:
+        tokens = [item for sublist in [x.split('_') for x in i] for item in sublist]
+        counter = Counter(tokens)
+        highestCounts = counter.most_common()
+        clusterIndex.append(idx)
+        commonWords.append(highestCounts)
+    
+    clusterTokens = list(zip(clusterIndex,commonWords))
+
+    def getClusterNES(data):
+        ## An nested function for extracting the normalised enrichment scores for the selected subgraphs
+        clusterIndex, clusterLists = zip(*data)
+    
+        averageNES = []
+        moduleIndex = []
+
+        ## Iterate through the genesets in each subgraph, extract the normalised enrichment scores, and compute an average for the whole subgraph
+        for i in range(len(clusterLists)):
+            moduleIndex.append(clusterIndex[i])
+        
+            moduleNES = []
+            for j in clusterLists[i]:
+                nes = metaDf['nes'][metaDf['node'] == j].values[0]
+                moduleNES.append(nes)
+            
+            average = np.mean(moduleNES)
+            averageNES.append(average)
+    
+        clusterNES = list(zip(moduleIndex,averageNES))
+        return clusterNES
+    
+    moduleNES = getClusterNES(outputClusters)
+    
+    return clusterTokens, outputClusters, moduleNES 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def uniqueGenes(geneLists,lookup):
+    '''
+    This function takes the list of modules represnted within each of the network subgraphs and then accesses the gene lookup table for these modules. 
+    All unique genes for a given network cluster are returned as dictionary.
+    '''
+
+    geneFull = {}
+    for list_ in geneLists:
+        cluster = list_[0]
+        modules = list_[1]
+        
+        fetch_items = []
+        
+        for module in modules:
+            items = lookup[module]
+            fetch_items.append(items)
+        
+        flatItems = [item for sublist in fetch_items for item in sublist]
+        geneUnique = list(set(flatItems))
+        
+        geneFull[cluster] = geneUnique
+    
+    return geneFull
 
