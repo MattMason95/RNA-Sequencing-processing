@@ -2,7 +2,6 @@
 Consolidation of BASH and R scripts for the pre-processing of raw RNA-sequencing data.\
 
 A Yaml source file is provided to build the Conda environment used for this analysis.\
-The ENSEBML Mus musculus Grcm39.100.gtf reference file is also uploaded for posterity.\
 The Bash Script directory contains an array of scripts for performing the pre-processing and alignment of raw FastQ files.\
 Each script has an accompanying "*_execute.sbatch" script for deploying the scripts to the Cambridge CSD3 using SLURM Job Scheduling.
 
